@@ -62,6 +62,7 @@
 标定大体流程图从上到下如下过程：
 
 ![flow](./data/flow.png)
+
 Fig. 第1行为原始鱼眼畸变图像,第2行为对应的去畸变图像，第3行为对应的俯视图像
 
 最后计算各自视图相对"front"的转换矩阵，融合拼接全景俯视图像即可。
@@ -77,6 +78,7 @@ Fig. 第1行为原始鱼眼畸变图像,第2行为对应的去畸变图像，第
 3. 新进入的车位，即unassignedDetection;
 
 ![cost matrix](./data/costMatrix.JPG)
+
 Fig. Cost代价矩阵，每行代表跟踪，每列代表检测
 
 说明如下：对于第1种情况，跟踪与某个检测关联上了，其历史计数应当加1；第2种情况，跟踪丢失，跟踪器不一定删除，但若超过给定阈值，则删除此跟踪；第3种情况，新进入的车位，一般没有与历史跟踪匹配的上，那么新建一个跟踪。
@@ -88,7 +90,9 @@ Cost代价矩阵的计算根据自己定义的距离函数进行度量，由于�
 上面说了多目标跟踪器，那么自然就联想到上面一个“检测目标”应该怎么表示，车位应当作为一个单独“类”来进行管理，做到跟踪器与车位无关！比如本项目目前用的是深度模型输出的2个顶点和夹角表示法，其可以转换为我们任何想要的表示方式，最简单直观的是输出4个顶点坐标。
 
 其实，常用的车位类型有很多种，比如下面几种，而我们遇到更多的是封闭式车位和车位线上的独有车位序号，这个应当作为车位这个类型的附加属性管理。车位当然还有其他更多属性，比如宽度，长度，车位线类型等等。
+
 ![parking Type](./data/parkingType.JPG)
+
 Fig. 车位类型，图源[link](https://ww2.mathworks.cn/help/driving/ref/parkingspace.html?s_tid=doc_ta)
 
 根据问题需要，本Repo使用简化的表示方式，即[$centerX$,$centerY$,$width$,$length$,$\theta$]表示一个车位，只考虑位姿，不考虑其他车位属性。
@@ -106,7 +110,9 @@ Fig. 车位类型，图源[link](https://ww2.mathworks.cn/help/driving/ref/parki
 要正确并实时方式构建地图，也要考虑到`ego vehicle`的任意走向和未知的停车场大小，所以前期**不要用像素地图扩张的方式构建，而是以非常自然的世界物理坐标方式表示传递，到真正需要路径规划用到`Cost Map`的时候，最后一步如有必要时直接转换为像素地图。其优势还在于此方法几乎没有任何计算开销和地图内存占用开销！仅仅用到几个坐标系转换矩阵乘法而已！**
 
 以近期的数据为例，其最终实时构建的动态costmap地图如下：
+
 ![cost map gif](./data/mapOnLine.gif)
+
 Fig. 左侧为当前帧检测车位，右侧为对应的costmap地图
 
 ### 4. Path Planning
@@ -114,13 +120,17 @@ Fig. 左侧为当前帧检测车位，右侧为对应的costmap地图
 这里主要是指地图的全局路径规划，只有在**泊车模式**下才启用。在建图模式下给定的`costmap`地图+起始和终点坐标点，生成一条无碰撞的全局路径，目的用于后续局部路径规划作为参考线。另外关于局部路径规划请参阅郭倩之前的相关工作。
 
 根据年前自己完成的部分`C++`版`costmap`地图工作，结合近期的逐步完善，现在可以得到如下的多语义地图：
+
 ![cost map](./data/map_on_line.JPG)
+
 Fig. 多语义地图
 
 简单解释如下：如果以像素地图表征`costmap`，那么图像中是以概率网格占据的形式，在[0,1]范围之间，概率越接近1就越代表非freespace区域，越接近0就越代表可行驶区域。
 
 关于一段路径的路径规划示例如下：给定上述`costmap`地图+起始点和终止点坐标分别为`startPose = [0,0,0]`,`goalPose = [65,-17,-pi/2]`，那么通过混合A*算法可以得到如下规划路径。在MATLAB中可视化如下：
+
 ![cost map](./data/plannedPath.png)
+
 Fig. 路径规划
 
 ## C++ implementation
@@ -131,5 +141,4 @@ C++实现了上面同等部分功能，请移步到我的此[Repo](https://githu
 
 1. [Create 360° Bird's-Eye-View Image Around a Vehicle](https://www.mathworks.com/help/driving/ug/create-360-birds-eye-view-image.html)
 1. [Automated Parking Valet](https://www.mathworks.com/help/driving/ug/automated-parking-valet.html)
-
 1. [Automated Parking Systems](https://www.mathworks.com/help/driving/automated-parking-systems.html)
