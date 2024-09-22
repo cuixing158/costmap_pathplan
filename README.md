@@ -57,7 +57,7 @@
 - 利用畸变表多项式拟合求解内参和畸变系数
 - **仅利用地面一个矩形的物理尺寸计算内外参**
 
-详细实现标定流程文件请参阅[`fisheyeCameraCalibration.m`](./fisheyeCameraCalibration.m)。
+详细实现标定流程文件请参阅[`fisheyeCameraCalibration.m`](./fisheyeCameraCalibration.m)或者[pdf](https://github.com/cuixing158/Visual-Based-Odometry-Estimation/blob/main/fisheyeCameraCalibration.pdf)。
 
 标定大体流程图从上到下如下过程：
 
